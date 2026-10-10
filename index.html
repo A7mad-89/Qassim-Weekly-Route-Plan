@@ -472,7 +472,7 @@ html[data-theme="dark"] .noteName, body.dark .noteName{color:#111 !important;}
     {name:'Mohsen Farhan Ayoob', off:[1], promoter:'mohsen'},
     {name:'Yousef Ahmed Mohammed Hasan', off:[1], promoter:'yousef'},
     {name:'Hassan Mohammed Shemari', off:[3], promoter:'hassan'},
-    {name:'Mohamed Ahmed Abdelwahab Awad', off:[5], promoter:'mohamed-awad', dated:true}
+    {name:'Mohamed Ahmed Abdelwahab Awad', off:[], promoter:'mohamed-awad', dated:true}
   ];
   const absenceTerms=['absent','sick leave','annual leave','exam leave','bereavement','emergency','saudi national day','saudi founding day','eid al-fitr holiday','eid al fitr holiday','eid al-adha holiday','eid al adha holiday','wntd'];
   const temporaryAssignmentTerm='temporary pos assignment';
@@ -546,6 +546,37 @@ html[data-theme="dark"] .noteName, body.dark .noteName{color:#111 !important;}
   reps.forEach(rep=>{
     const panel=panelFor(rep);
     let status='Active', cls='brStatusActive';
+    // Mohamed's dated schedule is authoritative, not a recurring weekday-off rule.
+    // The previously agreed October 9 and 10 statuses remain fixed.
+    if(rep.dated && month==='Oct' && dayNum===9){
+      statuses.push({name:rep.name,status:'Day Off',cls:'brStatusOff'});
+      return;
+    }
+    if(rep.dated && month==='Oct' && dayNum===10){
+      active++;
+      statuses.push({name:rep.name,status:'Active',cls:'brStatusActive'});
+      return;
+    }
+    if(rep.dated && month==='Oct' && dayNum>=13){
+      const outletRow=panel && [...panel.querySelectorAll('.row')].find(r=>r.querySelector('.label') && /^Outlet:/i.test(r.querySelector('.label').textContent.trim()));
+      const outlet=outletRow ? outletRow.textContent.replace(/^Outlet:\s*/i,'').trim() : '';
+      const noteRow=panel && [...panel.querySelectorAll('.row')].find(r=>r.querySelector('.noteLabel'));
+      const note=noteRow ? noteRow.textContent.replace(/^Note:\s*/i,'').trim() : '';
+      if(!outlet && !note){
+        statuses.push({name:rep.name,status:'Not Scheduled',cls:'brStatusAbsent'});
+        return;
+      }
+      if(note){
+        const cleaned=note.replace(/^(?:Mohamed(?: Ahmed Abdelwahab Awad)?|Mohammed)\s*[–—:-]\s*/i,'').trim();
+        const statusText=cleaned || note;
+        const off=/^day\s*off$/i.test(statusText);
+        statuses.push({name:rep.name,status:statusText,cls:off?'brStatusOff':'brStatusAbsent'});
+        return;
+      }
+      active++;
+      statuses.push({name:rep.name,status:'Active',cls:'brStatusActive'});
+      return;
+    }
     if(rep.off.includes(dow)){ status='Day Off'; cls='brStatusOff'; }
     else {
       const ns=noteStatus(rep,panel);
