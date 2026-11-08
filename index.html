@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Qassim – Weekly Route Plan (November 2026)</title>
+<style>
+    :root{
+      --pageBg: var(--bg);
+      --panelBg: rgba(255,255,255,.72);
+
+      /* Fonts (offline-safe / iOS-friendly) */
+      --fontBody: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Arial, sans-serif;
+      --fontTitle: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Avenir Next", "Segoe UI", Roboto, Arial, sans-serif;
+      --fontPromoter: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Avenir Next", "Segoe UI", Roboto, Arial, sans-serif;
+
+      --bg:#EEF5F6;
+      --titleColor:#B3375A;
+      --promoterColor:#46878A;
+
+      --text:#111;
+      --muted:#555;
+      --link:#0077cc;
+
+      /* Button colors (03 → 09) */
+
+      --sun:#005F73;
+      --mon:#0081A7;
+      --tue:#00AFB9;
+      --wed:#DFFFFD;
+      --thu:#FED9B7;
+      --fri:#F6A89E;
+      --sat:#F07167;
+ /* 09 */
+
+      --shadowBtn: 0 4px 10px rgba(0,0,0,.18);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: var(--fontBody);
+      background: var(--pageBg);
+      color: var(--text);
+      padding: 14px 14px 28px;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      text-align:left;
+    }
+
+    /* Title: 2 lines only, centered */
+    h1{
+      font-family: var(--fontTitle);
+      text-align:center;
+      color: var(--titleColor);
+      margin: 16px 0 10px;
+      line-height: 1.05;
+      font-weight: 800;
+    }
+    .titleLine1{
+      display:block;
+      font-size: clamp(22px, 6vw, 40px);
+      white-space: nowrap;
+    }
+    .titleLine2{
+      display:block;
+      font-size: clamp(18px, 5.2vw, 32px);
+      margin-top: 6px;
+      white-space: nowrap;
+    }
+
+    /* Subtitle under title (exact text) */
+    .subtitle{
+      text-align:center;
+      color: var(--muted);
+      font-size: clamp(12px, 3.2vw, 14px);
+      margin: 0 0 18px;
+      line-height: 1.35;
+    }
+
+    /* Promoter name: LEFT aligned */
+    h2{
+      font-family: var(--fontPromoter);
+      font-size: clamp(18px, 4.6vw, 28px);
+      color: var(--promoterColor);
+      margin: 14px 0 10px;
+      font-weight: 800;
+      text-align:left;
+    }
+
+    /* No white cards */
+    .promoter{
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    /* Buttons: smaller + LEFT aligned */
+    .days{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 8px 0 10px;
+      align-items: stretch;
+      justify-items: stretch;
+    }
+
+    .dayBtn{
+      width: 100%;
+      padding: 11px 0;
+      border: 0;
+      border-radius: 28px;
+      color:#fff; /* ALWAYS WHITE */
+      font-size: 14px;
+      font-weight: 800;
+      cursor:pointer;
+      box-shadow: var(--shadowBtn);
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+      text-align:center;
+      white-space: nowrap;
+    }
+    .dayBtn:active{ transform: scale(.98); }
+    .dayBtn:hover{ filter: brightness(1.03); }
+    .dayBtn[aria-expanded="true"]{
+      outline: 3px solid #147CFF;
+      outline-offset: 2px;
+    }
+
+    .dayBtn.sun{ background: var(--sun); }
+    .dayBtn.mon{ background: var(--mon); }
+    .dayBtn.tue{ background: var(--tue); }
+    .dayBtn.wed{
+      background: var(--wed);
+      color:#fff; /* white fill */
+      -webkit-text-stroke: 0.55px #005F73; /* thin dark outline */
+      /* Fallback outline for browsers without text-stroke */
+      text-shadow:
+        0.6px 0   0 #005F73,
+       -0.6px 0   0 #005F73,
+        0   0.6px 0 #005F73,
+        0  -0.6px 0 #005F73;
+    }
+    .dayBtn.thu{ background: var(--thu); }
+    .dayBtn.fri{ background: var(--fri); }
+    .dayBtn.sat{ background: var(--sat); }
+
+    /* Panels */
+    .panel{
+      display:none;
+      margin: 0 0 10px;
+      max-width: 720px;
+      background: var(--panelBg);
+      padding: 10px 12px;
+      border-radius: 10px;
+      text-align:left;
+    }
+    .panel.show{ display:block; }
+
+    .row{
+      margin: 4px 0;
+      line-height: 1.35;
+      font-size: 14px;
+    }
+    .label{ font-weight: 800; margin-right: 6px; }
+
+    a{ color: var(--link); font-weight: 700; text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    /* Divider */
+    hr.divider{
+      border: none;
+      border-bottom: 2px solid var(--promoterColor);
+      width: 100%;
+      margin: 18px 0;
+    }
+
+    /* Bottom note */
+    p.note{
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 28px;
+      text-align:center;
+    }
+    /* Top bar (toggle in its own row) */
+    .topbar{
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      margin: 8px 0 6px;
+    }
+
+    
+    .themeToggle{
+      appearance:none;
+      border: 2px solid rgba(0,0,0,.28);
+      background: rgba(255,255,255,.92);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,.10);
+      user-select: none;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+    }
+    html[data-theme="dark"] .themeToggle{
+      border-color: rgba(255,255,255,.32);
+      background: rgba(18,18,18,.72);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    }
+    .themeToggle:active{ transform: scale(.99); }
+@media (max-width: 420px){
+      .dayBtn{ font-size: 13px; padding: 10px 0; border-radius: 24px; }
+      .days{ gap: 8px; }
+      .panel{ max-width: 92vw; }
+    }
+  
+    /* ===== Dark theme (manual toggle) ===== */
+    html[data-theme="dark"]{
+      --pageBg:#0b1220;
+      --panelBg: rgba(255,255,255,.10);
+      --text:#f2f5f9;
+      --muted:#b8c0cc;
+      --link:#7fb7ff;
+      --toggleBg: rgba(255,255,255,.10);
+      --toggleText: #f2f5f9;
+      --toggleBorder: rgba(255,255,255,.18);
+    }
+
+    /* If user didn't choose, follow system preference */
+    @media (prefers-color-scheme: dark){
+      html:not([data-theme]){
+        --pageBg:#0b1220;
+        --panelBg: rgba(255,255,255,.10);
+        --text:#f2f5f9;
+        --muted:#b8c0cc;
+        --link:#7fb7ff;
+        --toggleBg: rgba(255,255,255,.10);
+        --toggleText: #f2f5f9;
+        --toggleBorder: rgba(255,255,255,.18);
+      }
+    }
+
+  
+/* WED text: outlined ONLY in Light Mode */
+.dayBtn.wed{ color:#ffffff; } /* default */
+
+body:not(.dark) .dayBtn.wed{
+  color:#ffffff;
+  -webkit-text-stroke: 0.65px #B5C1C1;
+  text-stroke: 0.65px #B5C1C1;
+  text-shadow:
+    0.65px 0 0 #B5C1C1,
+   -0.65px 0 0 #B5C1C1,
+    0 0.65px 0 #B5C1C1,
+    0 -0.65px 0 #B5C1C1;
+}
+
+body.dark .dayBtn.wed{
+  color:#ffffff;
+  -webkit-text-stroke: 0.65px #B5C1C1;
+  text-stroke: 0.65px #B5C1C1;
+  text-shadow:
+    0.65px 0 0 #B5C1C1,
+   -0.65px 0 0 #B5C1C1,
+    0 0.65px 0 #B5C1C1,
+    0 -0.65px 0 #B5C1C1;
+}
+  
+    .sectionBadge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin: 18px 0 12px;
+      padding: 10px 18px;
+      border-radius: 18px 18px 18px 4px;
+      background: linear-gradient(135deg, #B3375A, #46878A);
+      color:#fff;
+      font-size: clamp(16px, 4vw, 22px);
+      font-weight: 900;
+      letter-spacing:.2px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+    }
+
+  
+
+/* ===== Qassim final enhancements ===== */
+.row{font-size:clamp(15px,3.8vw,17px);line-height:1.42;white-space:nowrap;overflow-x:auto;scrollbar-width:none;}
+.row::-webkit-scrollbar{display:none;}
+.panel{max-width:100%;padding:12px 14px;}
+.noteLabel{color:#FFD700;font-weight:900;}
+.noteValue{color:#FF3B30;font-weight:900;}
+.dayOffText{color:#E67E22;font-weight:900;font-size:clamp(16px,4vw,18px);}
+.activeWrap{display:flex;justify-content:center;margin:12px 0 22px;}
+.activeBadge{width:132px;height:132px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(145deg,#0B6E75,#18A6A8);color:#fff;box-shadow:0 10px 28px rgba(0,95,115,.28),inset 0 0 0 5px rgba(255,255,255,.14);text-align:center;}
+.activeBadge .activeLabel{font-size:15px;font-weight:900;letter-spacing:.3px;}
+.activeBadge .activeCount{font-size:42px;line-height:1;font-weight:950;margin:4px 0;}
+.activeBadge .activeDate{font-size:10px;font-weight:700;opacity:.9;}
+@media(max-width:420px){.row{font-size:15px}.activeBadge{width:118px;height:118px}.activeBadge .activeCount{font-size:38px}.aiSightLogo{width:104px;height:104px}.aiSightLogo svg{width:96px;height:96px}}
+
+/* ===== Final review refinements ===== */
+.sectionBadge{margin-top:48px;}
+.activeWrap + .sectionBadge{margin-top:18px;}
+.shiftTime{display:block;font-size:13px;font-weight:650;color:var(--muted);margin-top:3px;}
+@media(max-width:420px){.aiSightLogo{width:min(210px,66vw);height:auto;}}
+
+/* ===== Category visual grouping ===== */
+.categoryBox{
+  border:2px solid rgba(70,135,138,.48);
+  border-radius:22px;
+  padding:6px 14px 14px;
+  margin:18px 0;
+  box-shadow:0 5px 16px rgba(0,0,0,.055);
+}
+.categoryBox > .sectionBadge, .categoryBox > .aiSightBadge{
+  margin-top:2px;
+}
+html[data-theme="dark"] .categoryBox, body.dark .categoryBox{
+  border-color:rgba(127,183,255,.38);
+  box-shadow:0 6px 18px rgba(0,0,0,.18);
+}
+@media(max-width:420px){
+  .categoryBox{padding:5px 10px 12px;border-radius:18px;margin:16px 0;}
+}
+
+/* ===== Today's BR Status ===== */
+.brStatusCard{max-width:720px;margin:-8px auto 26px;padding:0 10px;}
+.brStatusDate{text-align:center;font-weight:900;font-size:14px;letter-spacing:.35px;color:var(--promoterColor);margin:0 0 8px;}
+.brStatusTable{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid rgba(70,135,138,.35);border-radius:14px;background:rgba(255,255,255,.34);box-shadow:0 5px 16px rgba(0,0,0,.045);}
+.brStatusTable th,.brStatusTable td{padding:9px 11px;text-align:left;font-size:13px;border-bottom:1px solid rgba(70,135,138,.18);}
+.brStatusTable th{font-weight:900;background:rgba(70,135,138,.10);}
+.brStatusTable tr:last-child td{border-bottom:0;}
+.brStatusTable th:last-child,.brStatusTable td:last-child{text-align:center;width:34%;white-space:nowrap;}
+.brStatusActive{color:#18864B;font-weight:900;}
+.brStatusOff{color:#E67E22;font-weight:900;}
+.brStatusAbsent{color:#D93025;font-weight:900;}
+html[data-theme="dark"] .brStatusTable,body.dark .brStatusTable{background:rgba(255,255,255,.06);border-color:rgba(127,183,255,.30);}
+html[data-theme="dark"] .brStatusTable th,body.dark .brStatusTable th{background:rgba(127,183,255,.10);}
+@media(max-width:420px){.brStatusCard{padding:0 2px;margin-top:-6px}.brStatusTable th,.brStatusTable td{padding:8px 7px;font-size:12px}.brStatusTable th:last-child,.brStatusTable td:last-child{width:31%;}.brStatusDate{font-size:13px}}
+
+
+/* ===== User-requested final corrections ===== */
+  position:relative; isolation:isolate; border:2px solid transparent;
+  background:linear-gradient(145deg,#0B2340,#123A5C 62%,#15506B) padding-box,
+             linear-gradient(90deg,#147CFF,#13B8F4,#24E6D2,#147CFF) border-box !important;
+  box-shadow:0 0 8px rgba(20,124,255,.70),0 0 18px rgba(19,184,244,.48),0 0 28px rgba(36,230,210,.30) !important;
+}
+.pairedRep{display:block}.pairedRep + .pairedRep{margin-top:16px}.pairedRep .shiftTime{margin-top:4px}
+.shiftLine{display:block}.shiftLine+.shiftLine{margin-top:3px}
+
+/* ===== Agreed final corrections ===== */
+.noteName{color:#708090 !important;font-weight:400;}
+html[data-theme="dark"] .noteName, body.dark .noteName{color:#FFFFFF !important;}
+  background:linear-gradient(135deg,#B63B48 0%,#D95A62 52%,#E77A72 100%) !important;
+  box-shadow:0 5px 14px rgba(217,90,98,.28) !important;
+}
+
+</style>
+<!-- Fonts: Poppins (Title) + Inter (Body) -->
+<style>
+.mohsenAnnualLeave,.mohsenAnnualLeaveStatus{color:#00F2FF!important;font-weight:900!important;}
+
+</style>
+<style>.brStatusPending{color:#23BCE5!important;font-weight:800!important;}</style><style>
+.pendingText,.brStatusPending{color:#23BCE5!important;font-weight:900!important}
+.vacantHeading{color:#7A2445!important}
+.dayOffText,.brStatusOff{color:#E67E22!important;font-weight:900!important}
+.brStatusAnnual{color:#E3B900!important;font-weight:900!important}
+.brStatusActive{color:#18864B!important}
+</style><style>
+/* November final consistency */
+.pendingText,.brStatusPending{color:#23BCE5!important;font-weight:900!important}
+.dayOffText,.brStatusOff{color:#E67E22!important;font-weight:900!important}
+.brStatusAnnual,.annualLeaveText{color:#E3B900!important;font-weight:900!important}
+.brStatusActive{color:#18864B!important;font-weight:900!important}
+.vacantHeading{color:#7A2445!important}
+.panel .row:has(.pendingText){margin-top:8px;font-weight:400;color:var(--text)}
+</style><style>.aiSightBadge{background:linear-gradient(135deg,#07172E,#0C7E9E);box-shadow:0 8px 22px rgba(0,126,158,.30);}
+.aiSightCard{margin-top:6px;padding:18px 14px 14px;border-radius:22px;background:linear-gradient(145deg,#061426,#0A2341 62%,#0A526A);box-shadow:0 12px 30px rgba(2,18,38,.25);}
+.aiSightCard h2{color:#DFF8FF;margin-top:12px;}
+.aiSightLogo{width:118px;height:118px;margin:0 auto 8px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 45%,#0D345B 0 40%,#061426 72%);box-shadow:0 0 0 4px rgba(82,220,255,.18),0 0 28px rgba(39,202,255,.55);position:relative;overflow:hidden;}
+.aiSightLogo svg{width:108px;height:108px;display:block;}
+.aiSightDates{grid-template-columns:repeat(4,minmax(0,1fr));}
+.aiSightCard .panel{background:rgba(255,255,255,.09);color:#F4FBFF;}
+.aiSightCard .label{color:#EAFBFF;}
+.aiSightCard a{color:#67D8FF;}
+.aiSightCard .dayOffText{color:#F5A24A;}
+@media(max-width:420px){.row{font-size:15px}.activeBadge{width:118px;height:118px}.activeBadge .activeCount{font-size:38px}.aiSightLogo{width:104px;height:104px}.aiSightLogo svg{width:96px;height:96px}}
+.aiSightCard .shiftTime{color:#B9DDE8;}
+.aiSightLogo{width:min(240px,68vw);height:auto;aspect-ratio:1/1;border-radius:28px;background:#061426;box-shadow:0 0 0 3px rgba(82,220,255,.18),0 0 34px rgba(39,202,255,.42);}
+.aiSightLogo img{width:100%;height:100%;display:block;object-fit:cover;border-radius:28px;}
+.aiSightDates .dayBtn{background:linear-gradient(135deg,#147CFF 0%,#13B8F4 48%,#24E6D2 100%) !important;color:#fff !important;-webkit-text-stroke:0 !important;text-shadow:none !important;box-shadow:0 5px 14px rgba(18,174,232,.28);}
+.aiSightDates .dayBtn[aria-expanded="true"]{outline:3px solid #147CFF;outline-offset:2px;}
+@media(max-width:420px){.aiSightLogo{width:min(210px,66vw);height:auto;}}
+.categoryBox > .sectionBadge, .categoryBox > .aiSightBadge{
+  margin-top:2px;
+}
+.aiSightBadge{
+  position:relative; isolation:isolate; border:2px solid transparent;
+  background:linear-gradient(145deg,#0B2340,#123A5C 62%,#15506B) padding-box,
+             linear-gradient(90deg,#147CFF,#13B8F4,#24E6D2,#147CFF) border-box !important;
+  box-shadow:0 0 8px rgba(20,124,255,.70),0 0 18px rgba(19,184,244,.48),0 0 28px rgba(36,230,210,.30) !important;
+}
+.aiSightAI{font-weight:950;letter-spacing:-.8px;background:linear-gradient(90deg,#147CFF 0%,#13B8F4 52%,#24E6D2 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;}
+.aiSightSight{font-weight:950;color:#fff;-webkit-text-fill-color:#fff;letter-spacing:-.35px;}
+.aiSightGap{font-weight:950;color:#fff;-webkit-text-fill-color:#fff;margin-left:.32em;}
+.aiSightWord{font-weight:950;letter-spacing:-.35px;background:linear-gradient(90deg,#147CFF 0%,#13B8F4 52%,#24E6D2 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;text-shadow:0 0 14px rgba(36,230,210,.20)}
+.aiSightTestWord{color:#fff;-webkit-text-fill-color:#fff}
+.aiSightDates .dayBtn{height:46px;padding:5px 0 4px !important;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.02}
+.aiSightDates .dayName{display:block;font-size:9px;font-weight:800;letter-spacing:.7px;opacity:.88;margin-bottom:4px}
+.aiSightDates .dateText{display:block;font-size:14px;font-weight:800}
+.aiSightDates .dayBtn.aiSightOffDay{
+  background:linear-gradient(135deg,#B63B48 0%,#D95A62 52%,#E77A72 100%) !important;
+  box-shadow:0 5px 14px rgba(217,90,98,.28) !important;
+}
+.aiSightDates .dayBtn.aiSightOffDay{background:linear-gradient(135deg,#B63B48,#D95A62,#E77A72)!important;box-shadow:0 5px 14px rgba(217,90,98,.28)!important;}
+.aiSightCard .dayOffText{color:#E67E22!important;}
+</style><style>.pairedRep + .pairedRep{margin-top:20px!important;}</style><style>
+/* Clear spacing between representatives at shared POS locations */
+section.promoter[data-promoter="tamimi-unaizah"] > h2,
+section.promoter[data-promoter="tamimi-buraydah"] > h2 {
+  display:flex !important; flex-direction:column !important; gap:26px !important;
+}
+section.promoter[data-promoter="tamimi-unaizah"] > h2 > .pairedRep,
+section.promoter[data-promoter="tamimi-buraydah"] > h2 > .pairedRep {
+  display:block !important; margin:0 !important; padding:0 !important;
+}
+section.promoter[data-promoter="tamimi-unaizah"] > h2 > .pairedRep .shiftTime,
+section.promoter[data-promoter="tamimi-buraydah"] > h2 > .pairedRep .shiftTime {
+  display:block !important; margin-top:5px !important;
+}
+</style><style>
+.aiRefusedNote{font-weight:600;}
+</style><style>
+/* Approved leave colors: readable in light and dark themes. */
+.annualLeaveText,.brStatusAnnual{color:#E6C700!important;font-weight:900!important;}
+.sickLeaveText,.brStatusSick{color:#A66AE8!important;font-weight:900!important;}
+html[data-theme="dark"] .annualLeaveText,html[data-theme="dark"] .brStatusAnnual,
+body.dark .annualLeaveText,body.dark .brStatusAnnual{color:#FFEB3B!important;}
+html[data-theme="dark"] .sickLeaveText,html[data-theme="dark"] .brStatusSick,
+body.dark .sickLeaveText,body.dark .brStatusSick{color:#C9A0FF!important;}
+</style><style>
+.annualLeaveText { color: #E3B900; font-weight: 700; }
+</style></head>
+<body><div class="wrap"><div class="topbar"><button class="themeToggle" id="themeToggle" type="button">Dark Mode 🌙</button></div><h1><span class="titleLine1">Qassim – Weekly Route Plan</span><span class="titleLine2">(November 2026)</span></h1><p class="subtitle">Weekly pattern (Sunday → Saturday).<br/>Tap a day to show details.<br/>Location links open Google Maps.</p><div class="activeWrap"><div class="activeBadge" id="activeBRBadge"><div class="activeLabel">Active BRs</div><div class="activeCount">—</div></div></div><div class="brStatusCard"><div class="brStatusDate" id="brStatusDate">—</div><table aria-label="Today BR Status" class="brStatusTable"><thead><tr><th>BR Name</th><th>Status</th></tr></thead><tbody id="brStatusBody"></tbody></table></div><div class="categoryBox"><div class="sectionBadge">DS (GT/TB/SIS):</div><hr class="divider"/><section class="promoter" data-promoter="tamimi-unaizah"><h2><span class="pairedRep">Yazeed Mohammed Aldbeban (Day)<span class="shiftTime">From 8:00 AM to 4:00 PM</span></span><span class="pairedRep">Ali Fahad Alsubaie (Night)<span class="shiftTime">From 4:00 PM to 12:00 AM</span></span></h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="tamimi-unaizah-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="tamimi-unaizah-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="tamimi-unaizah-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="tamimi-unaizah-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="tamimi-unaizah-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="tamimi-unaizah-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="tamimi-unaizah-6">SAT</button></div><div class="panel" id="tamimi-unaizah-0"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Unaizah 190_DS_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622651</div><div class="row"><a href="https://maps.app.goo.gl/BHZHRvYjNpZHDnoo8" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Yazeed | Night / Ali</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-unaizah-1"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Unaizah 190_DS_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622651</div><div class="row"><a href="https://maps.app.goo.gl/BHZHRvYjNpZHDnoo8" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Yazeed | Night / Ali</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-unaizah-2"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Unaizah 190_DS_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622651</div><div class="row"><a href="https://maps.app.goo.gl/BHZHRvYjNpZHDnoo8" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Yazeed | Night / Ali</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-unaizah-3"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Unaizah 190_DS_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622651</div><div class="row"><a href="https://maps.app.goo.gl/BHZHRvYjNpZHDnoo8" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Yazeed | Night / Ali</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-unaizah-4"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Unaizah 190_DS_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622651</div><div class="row"><a href="https://maps.app.goo.gl/BHZHRvYjNpZHDnoo8" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Yazeed | Night / Ali</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-unaizah-5"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Unaizah 190_DS_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622651</div><div class="row"><a href="https://maps.app.goo.gl/BHZHRvYjNpZHDnoo8" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day only / Yazeed</div><div class="row"><span class="noteLabel">Note:</span> Ali – <span class="dayOffText">Day Off</span></div></div><div class="panel" id="tamimi-unaizah-6"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Unaizah 190_DS_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622651</div><div class="row"><a href="https://maps.app.goo.gl/BHZHRvYjNpZHDnoo8" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Night only / Ali</div><div class="row"><span class="noteLabel">Note:</span> Yazeed – <span class="dayOffText">Day Off</span></div></div></section><hr class="divider"/><section class="promoter" data-promoter="tamimi-buraydah"><h2><span class="pairedRep">Khaled Saleh AL Wakkaa (Day)<span class="shiftTime">From 8:00 AM to 4:00 PM</span></span><span class="pairedRep">Yousef Ahmed Mohammed Hasan (Night)<span class="shiftTime">From 4:00 PM to 12:00 AM</span></span></h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="tamimi-buraydah-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="tamimi-buraydah-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="tamimi-buraydah-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="tamimi-buraydah-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="tamimi-buraydah-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="tamimi-buraydah-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="tamimi-buraydah-6">SAT</button></div><div class="panel" id="tamimi-buraydah-0"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Buraydah_IP(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622650</div><div class="row"><a href="https://maps.app.goo.gl/w8CxQBvEgE5jkrXV8?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Khaled | Night / Yousef</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-buraydah-1"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Buraydah_IP(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622650</div><div class="row"><a href="https://maps.app.goo.gl/w8CxQBvEgE5jkrXV8?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Khaled | Night / Yousef</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-buraydah-2"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Buraydah_IP(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622650</div><div class="row"><a href="https://maps.app.goo.gl/w8CxQBvEgE5jkrXV8?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Khaled | Night / Yousef</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-buraydah-3"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Buraydah_IP(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622650</div><div class="row"><a href="https://maps.app.goo.gl/w8CxQBvEgE5jkrXV8?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Khaled | Night / Yousef</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-buraydah-4"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Buraydah_IP(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622650</div><div class="row"><a href="https://maps.app.goo.gl/w8CxQBvEgE5jkrXV8?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day / Khaled | Night / Yousef</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="tamimi-buraydah-5"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Buraydah_IP(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622650</div><div class="row"><a href="https://maps.app.goo.gl/w8CxQBvEgE5jkrXV8?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Day only / Khaled</div><div class="row"><span class="noteLabel">Note:</span> Yousef – <span class="dayOffText">Day Off</span></div></div><div class="panel" id="tamimi-buraydah-6"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Buraydah_IP(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622650</div><div class="row"><a href="https://maps.app.goo.gl/w8CxQBvEgE5jkrXV8?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Shifts:</span> Night only / Yousef</div><div class="row"><span class="noteLabel">Note:</span> Khaled – <span class="dayOffText">Day Off</span></div></div></section><hr class="divider"/><section class="promoter" data-promoter="alghada"><h2>Ahmed Elsayed AbdelSalam (Night)<span class="shiftTime">From 4:00 PM to 12:00 AM</span></h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="alghada-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="alghada-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="alghada-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="alghada-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="alghada-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="alghada-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="alghada-6">SAT</button></div><div class="panel" id="alghada-0"><div class="row"><span class="label">POS Name:</span>QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113005</div><div class="row"><a href="https://maps.app.goo.gl/J4whfPmBgx6LCmY86?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"> Night only / Ahmed</div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="alghada-1"><div class="row"><span class="label">POS Name:</span>QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113005</div><div class="row"><a href="https://maps.app.goo.gl/J4whfPmBgx6LCmY86?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"> Night only / Ahmed</div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="alghada-2"><div class="row"><span class="label">POS Name:</span>QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113005</div><div class="row"><a href="https://maps.app.goo.gl/J4whfPmBgx6LCmY86?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"> Night only / Ahmed</div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="alghada-3"><div class="row"><span class="label">POS Name:</span>QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113005</div><div class="row"><a href="https://maps.app.goo.gl/J4whfPmBgx6LCmY86?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"> Night only / Ahmed</div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="alghada-4"><div class="row"><span class="label">POS Name:</span>QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113005</div><div class="row"><a href="https://maps.app.goo.gl/J4whfPmBgx6LCmY86?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"> Night only / Ahmed</div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="alghada-5"><div class="row"><span class="label">POS Name:</span>QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113005</div><div class="row"><a href="https://maps.app.goo.gl/J4whfPmBgx6LCmY86?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="label">Shifts:</span>Night only / Abdullah</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="alghada-6"><div class="row"><span class="label">POS Name:</span>QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113005</div><div class="row"><a href="https://maps.app.goo.gl/J4whfPmBgx6LCmY86?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"> Night only / Abdullah</div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> <span class="dayOffText">Day Off</span></div></div></section><hr class="divider"/><section class="promoter" data-promoter="nine-plus"><h2><span class="pairedRep">Abdullah Hadi M Alotaibi (Night)<span class="shiftTime">From 4:00 PM to 12:00 AM</span></span></h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="nine-plus-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="nine-plus-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="nine-plus-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="nine-plus-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="nine-plus-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="nine-plus-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="nine-plus-6">SAT</button></div><div class="panel" id="nine-plus-0"><div class="row"><span class="label">POS Name:</span>QAS_Nine Plus Company 2_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462115766</div><div class="row"><a href="https://maps.app.goo.gl/YEyw9kSxLcw6NucC9?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span><span class="annualLeaveText"> Annual Leave — 8 Nov 2026</span></div></div><div class="panel" id="nine-plus-1"><div class="row"><span class="label">POS Name:</span>QAS_Nine Plus Company 2_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462115766</div><div class="row"><a href="https://maps.app.goo.gl/YEyw9kSxLcw6NucC9?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span><span class="annualLeaveText"> Annual Leave — 9 Nov 2026</span></div></div><div class="panel" id="nine-plus-2"><div class="row"><span class="label">POS Name:</span>QAS_Nine Plus Company 2_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462115766</div><div class="row"><a href="https://maps.app.goo.gl/YEyw9kSxLcw6NucC9?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="nine-plus-3"><div class="row"><span class="label">POS Name:</span>QAS_Nine Plus Company 2_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462115766</div><div class="row"><a href="https://maps.app.goo.gl/YEyw9kSxLcw6NucC9?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> <span class="dayOffText">Day Off</span></div></div><div class="panel" id="nine-plus-4"><div class="row"><span class="label">POS Name:</span>QAS_Nine Plus Company 2_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462115766</div><div class="row"><a href="https://maps.app.goo.gl/YEyw9kSxLcw6NucC9?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="nine-plus-5"><div class="row"><span class="label">POS Name:</span>QAS_Nine Plus Company 2_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462115766</div><div class="row"><a href="https://maps.app.goo.gl/YEyw9kSxLcw6NucC9?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> Covering QAS_Al-Ghada Super Market_DS(GT)_MN_BR</div></div><div class="panel" id="nine-plus-6"><div class="row"><span class="label">POS Name:</span>QAS_Nine Plus Company 2_DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462115766</div><div class="row"><a href="https://maps.app.goo.gl/YEyw9kSxLcw6NucC9?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span></div></div></section><hr class="divider"/><section class="promoter" data-promoter="hamad"><h2><span class="pairedRep">Hamad Mansour Soliman AlKhliwi (Night)<span class="shiftTime">From 4:00 PM to 12:00 AM</span></span></h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="hamad-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="hamad-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="hamad-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="hamad-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="hamad-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="hamad-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="hamad-6">SAT</button></div><div class="panel" id="hamad-0"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Al Raas S194_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622652</div><div class="row"><a href="https://maps.app.goo.gl/QN6pUXb2pZc6xfsh8?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="hamad-1"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Al Raas S194_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622652</div><div class="row"><a href="https://maps.app.goo.gl/QN6pUXb2pZc6xfsh8?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="hamad-2"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Al Raas S194_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622652</div><div class="row"><a href="https://maps.app.goo.gl/QN6pUXb2pZc6xfsh8?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="hamad-3"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Al Raas S194_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622652</div><div class="row"><a href="https://maps.app.goo.gl/QN6pUXb2pZc6xfsh8?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="hamad-4"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Al Raas S194_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622652</div><div class="row"><a href="https://maps.app.goo.gl/QN6pUXb2pZc6xfsh8?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="hamad-5"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Al Raas S194_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622652</div><div class="row"><a href="https://maps.app.goo.gl/QN6pUXb2pZc6xfsh8?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> <span class="dayOffText">Day Off</span></div></div><div class="panel" id="hamad-6"><div class="row"><span class="label">POS Name:</span>QAS_Tamimi Al Raas S194_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>966124622652</div><div class="row"><a href="https://maps.app.goo.gl/QN6pUXb2pZc6xfsh8?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div></section></div><div class="categoryBox"><div class="sectionBadge">DS (GT/TB/SIS) + BR/DS:</div><section class="promoter" data-promoter="mohsen"><h2>Mohsen Farhan Ayoob (Night)</h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="mohsen-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="mohsen-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="mohsen-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="mohsen-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="mohsen-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="mohsen-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="mohsen-6">SAT</button></div><div class="panel" id="mohsen-0"><div class="row"><span class="label">POS Name:</span>QAS_Sharikath Bayth Almadhahan 2_BR-DS(TB)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462118585</div><div class="row"><a href="https://maps.app.goo.gl/Wze4ZaVzAqFHvVD59?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="mohsen-1"><div class="row"><span class="noteLabel">Note:</span> <span class="dayOffText">Day Off</span></div></div><div class="panel" id="mohsen-2"><div class="row"><span class="label">POS Name:</span>QAS_Sharikath Bayth Almadhahan 2_BR-DS(TB)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462118585</div><div class="row"><a href="https://maps.app.goo.gl/Wze4ZaVzAqFHvVD59?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="mohsen-3"><div class="row"><span class="label">POS Name:</span>QAS_Sharikath Bayth Almadhahan 2_BR-DS(TB)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462118585</div><div class="row"><a href="https://maps.app.goo.gl/Wze4ZaVzAqFHvVD59?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="mohsen-4"><div class="row"><span class="label">POS Name:</span>QAS_SACO - Buraydah_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>9661246221494</div><div class="row"><a href="https://maps.app.goo.gl/Rir7fpx81RBRh7h58?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>3:00 PM to 11:00 PM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="mohsen-5"><div class="row"><span class="label">POS Name:</span>QAS_SACO - Buraydah_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>9661246221494</div><div class="row"><a href="https://maps.app.goo.gl/Rir7fpx81RBRh7h58?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>3:00 PM to 11:00 PM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="mohsen-6"><div class="row"><span class="label">POS Name:</span>QAS_SACO - Buraydah_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span>9661246221494</div><div class="row"><a href="https://maps.app.goo.gl/Rir7fpx81RBRh7h58?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>3:00 PM to 11:00 PM</div><div class="row"><span class="noteLabel">Note:</span> </div></div></section><hr class="divider"/><section class="promoter" data-promoter="hassan"><h2>Hassan Mohammed Shemari (Night)<span class="shiftTime">From 4:00 PM to 12:00 AM</span></h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="hassan-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="hassan-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="hassan-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="hassan-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="hassan-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="hassan-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="hassan-6">SAT</button></div><div class="panel" id="hassan-0"><div class="row"><span class="label">POS Name:</span> QAS_SASCO PALM-10851 AZ Zarqa_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span> 9661246221175</div><div class="row"><span class="label"></span><a href="https://maps.app.goo.gl/XHugdP6PLyAuBVia6" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="hassan-1"><div class="row"><span class="noteLabel">Note:</span> <span class="dayOffText">Day Off</span></div></div><div class="panel" id="hassan-2"><div class="row"><span class="label">POS Name:</span> QAS_SASCO PALM-10851 AZ Zarqa_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span> 9661246221175</div><div class="row"><span class="label"></span><a href="https://maps.app.goo.gl/XHugdP6PLyAuBVia6" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="hassan-3"><div class="row"><span class="label">POS Name:</span> QAS_SASCO PALM-10851 AZ Zarqa_DS(KA)_MN_BR</div><div class="row"><span class="label">Unicode:</span> 9661246221175</div><div class="row"><span class="label"></span><a href="https://maps.app.goo.gl/XHugdP6PLyAuBVia6" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span></div></div><div class="panel" id="hassan-4"><div class="row"><span class="label">POS Name:</span> QAS_Riadat Alostoura 1_BR-DS(TB)_MN_BR</div><div class="row"><span class="label">Unicode:</span> 96612462118582</div><div class="row"><span class="label"></span><a href="https://maps.app.goo.gl/YMhAbJ17sbXk5HzYA?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span> <span class="annualLeaveText">Annual Leave</span></div></div><div class="panel" id="hassan-5"><div class="row"><span class="label">POS Name:</span> QAS_Riadat Alostoura 1_BR-DS(TB)_MN_BR</div><div class="row"><span class="label">Unicode:</span> 96612462118582</div><div class="row"><span class="label"></span><a href="https://maps.app.goo.gl/YMhAbJ17sbXk5HzYA?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span> <span class="annualLeaveText">Annual Leave</span></div></div><div class="panel" id="hassan-6"><div class="row"><span class="label">POS Name:</span> QAS_Riadat Alostoura 1_BR-DS(TB)_MN_BR</div><div class="row"><span class="label">Unicode:</span> 96612462118582</div><div class="row"><span class="label"></span><a href="https://maps.app.goo.gl/YMhAbJ17sbXk5HzYA?g_st=ic" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="noteLabel">Note:</span></div></div></section></div><div class="categoryBox"><div class="sectionBadge">BR/DS:</div><section class="promoter" data-promoter="abdul-wahab"><h2>Mohamed Ahmed Abdelwahab Awad (Night)</h2><div class="days"><button aria-expanded="false" class="dayBtn sun" data-target="abdul-wahab-0">SUN</button><button aria-expanded="false" class="dayBtn mon" data-target="abdul-wahab-1">MON</button><button aria-expanded="false" class="dayBtn tue" data-target="abdul-wahab-2">TUE</button><button aria-expanded="false" class="dayBtn wed" data-target="abdul-wahab-3">WED</button><button aria-expanded="false" class="dayBtn thu" data-target="abdul-wahab-4">THU</button><button aria-expanded="false" class="dayBtn fri" data-target="abdul-wahab-5">FRI</button><button aria-expanded="false" class="dayBtn sat" data-target="abdul-wahab-6">SAT</button></div><div class="panel" id="abdul-wahab-0"><div class="row"><span class="noteLabel">Note:</span> <span class="dayOffText">Day Off</span></div></div><div class="panel" id="abdul-wahab-1"><div class="row"><span class="label">POS Name:</span>QAS_Tamwinath Salat Jood_BR-DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113819</div><div class="row"><a href="https://maps.app.goo.gl/sVESjXdR9cLzQV9eA" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="abdul-wahab-2"><div class="row"><span class="label">POS Name:</span>QAS_Tamwinath Salat Jood_BR-DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113819</div><div class="row"><a href="https://maps.app.goo.gl/sVESjXdR9cLzQV9eA" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="abdul-wahab-3"><div class="row"><span class="label">POS Name:</span>QAS_Tamwinath Salat Jood_BR-DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462113819</div><div class="row"><a href="https://maps.app.goo.gl/sVESjXdR9cLzQV9eA" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>4:00 PM to 12:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="abdul-wahab-4"><div class="row"><span class="label">POS Name:</span>QAS_Tufha Al Mazaj {Nahda}_BR-DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462119219</div><div class="row"><a href="https://maps.app.goo.gl/SsvNtvd1bSqbeXR28?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>6:00 PM to 2:00 AM</div><div class="row"><span class="noteLabel">Note:</span> <span class="sickLeaveText">Sick Leave</span></div></div><div class="panel" id="abdul-wahab-5"><div class="row"><span class="label">POS Name:</span>QAS_Tufha Al Mazaj {Nahda}_BR-DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462119219</div><div class="row"><a href="https://maps.app.goo.gl/SsvNtvd1bSqbeXR28?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>6:00 PM to 2:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div><div class="panel" id="abdul-wahab-6"><div class="row"><span class="label">POS Name:</span>QAS_Tufha Al Mazaj {Nahda}_BR-DS(GT)_MN_BR</div><div class="row"><span class="label">Unicode:</span>96612462119219</div><div class="row"><a href="https://maps.app.goo.gl/SsvNtvd1bSqbeXR28?g_st=iw" rel="noopener" target="_blank">Open Google Maps</a></div><div class="row"><span class="label">Working Hours:</span>6:00 PM to 2:00 AM</div><div class="row"><span class="noteLabel">Note:</span> </div></div></section></div><p class="note">Note: Weekly template for Qassim – November 2026.<br/>Only the included outlets are shown.</p></div>
+<script>
+    (function(){
+      const buttons = document.querySelectorAll(".dayBtn");
+
+      function closePanelsInSamePromoter(btn){
+        const promoter = btn.closest(".promoter");
+        if(!promoter) return;
+        promoter.querySelectorAll(".panel").forEach(p => p.classList.remove("show"));
+        promoter.querySelectorAll(".dayBtn").forEach(b => b.setAttribute("aria-expanded","false"));
+      }
+
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const targetId = btn.getAttribute("data-target");
+          const panel = document.getElementById(targetId);
+          if(!panel) return;
+
+          // If this panel is already open, close it directly (failsafe).
+          if(panel.classList.contains("show")){
+            panel.classList.remove("show");
+            btn.setAttribute("aria-expanded","false");
+            return;
+          }
+
+          // Otherwise, close others in the same promoter then open this one.
+          closePanelsInSamePromoter(btn);
+          panel.classList.add("show");
+          btn.setAttribute("aria-expanded","true");
+        });
+      });
+    })();
+  
+    (function(){
+      const htmlEl = document.documentElement;
+      const toggle = document.getElementById("themeToggle");
+      if(!toggle) return;
+
+      function setTheme(mode){
+        if(mode === "dark"){
+          htmlEl.setAttribute("data-theme","dark");
+          document.body.classList.add("dark");
+          toggle.textContent = "Light Mode ☀️";
+          try{ localStorage.setItem("qassimTheme","dark"); }catch(e){}
+        }else{
+          htmlEl.removeAttribute("data-theme");
+          document.body.classList.remove("dark");
+          toggle.textContent = "Dark Mode 🌙";
+          try{ localStorage.setItem("qassimTheme","light"); }catch(e){}
+        }
+      }
+
+      // init
+      let saved = null;
+      try{ saved = localStorage.getItem("qassimTheme"); }catch(e){}
+      if(saved === "dark") setTheme("dark");
+      else if(saved === "light") setTheme("light");
+
+      toggle.addEventListener("click", () => {
+        const isDark = htmlEl.getAttribute("data-theme") === "dark" || document.body.classList.contains("dark");
+        setTheme(isDark ? "light" : "dark");
+      });
+    })();
+
+  </script>
+<script>(function(){
+const reps=[
+{name:'Yazeed Mohammed Aldbeban',off:[6],site:'tamimi-unaizah'},
+{name:'Ali Fahad Alsubaie',off:[5],site:'tamimi-unaizah'},
+{name:'Khaled Saleh AL Wakkaa',off:[6],site:'tamimi-buraydah'},
+{name:'Yousef Ahmed Mohammed Hasan',off:[5],site:'tamimi-buraydah'},
+{name:'Ahmed Elsayed AbdelSalam',off:[6],site:'alghada'},
+{name:'Abdullah Hadi M Alotaibi',off:[3],site:'nine-plus'},
+{name:'Hamad Mansour Soliman AlKhliwi',off:[5],site:'hamad'},
+{name:'Hassan Mohammed Shemari',off:[1],site:'hassan'},
+{name:'Mohsen Farhan Ayoob',off:[1],site:'mohsen'},
+{name:'Mohamed Ahmed Abdelwahab Awad',off:[0],site:'abdul-wahab'}
+];
+const now=new Date();
+const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Riyadh',weekday:'short',day:'2-digit',month:'short',year:'numeric'}).formatToParts(now);
+const get=k=>(parts.find(p=>p.type===k)||{}).value||'';
+const dow={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6}[get('weekday')];
+const specialDay=Number(get('day'));
+const special=Number(get('year'))===2026&&get('month')==='Nov'&&specialDay>=3&&specialDay<=8;
+const absence=[['sick leave','Sick Leave'],['annual leave','Annual Leave'],['absent','Absent'],['exam leave','Exam Leave'],['bereavement','Bereavement'],['emergency','Emergency'],['wntd','WNTD']];
+function statusFor(rep){
+ if(rep.name==='Abdullah Hadi M Alotaibi' && Number(get('year'))===2026 && get('month')==='Nov' && (specialDay===8 || specialDay===9))return 'Annual Leave';
+ if(rep.name==='Mohamed Ahmed Abdelwahab Awad'&&special&&specialDay<5)return 'Active';
+ if(rep.off.includes(dow))return 'Day Off';
+ const panel=document.getElementById(rep.site+'-'+dow);
+ if(!panel)return 'Active';
+ const notes=[...panel.querySelectorAll('.row')].filter(r=>r.querySelector('.noteLabel')).map(r=>r.textContent.replace(/^Note\s*:/i,'').trim().toLowerCase());
+ for(const note of notes){
+  if(/temporarily covered|temporarily covering|^covering /.test(note))continue;
+  if(['tamimi-unaizah','tamimi-buraydah'].includes(rep.site)){
+   const others=reps.filter(x=>x.site===rep.site&&x!==rep);
+   if(others.some(x=>note.includes(x.name.toLowerCase())||note.includes(x.name.split(' ')[0].toLowerCase())))continue;
+  }
+  if(note.includes('day off'))return 'Day Off';
+  for(const [key,value] of absence)if(note.includes(key))return value;
+ }
+ return 'Active';
+}
+const statuses=reps.map(rep=>({name:rep.name,status:statusFor(rep)}));
+const count=document.querySelector('#activeBRBadge .activeCount');if(count)count.textContent=statuses.filter(x=>x.status==='Active').length;
+const date=document.getElementById('brStatusDate');if(date)date.textContent=`${get('weekday').toUpperCase()} – ${get('day')} ${get('month').toUpperCase()} ${get('year')}`;
+const tbody=document.getElementById('brStatusBody');if(tbody){tbody.replaceChildren();for(const item of statuses){
+ const tr=document.createElement('tr'),a=document.createElement('td'),b=document.createElement('td');
+ a.textContent=item.name;b.textContent=item.status;
+ b.className=item.status==='Active'?'brStatusActive':item.status==='Day Off'?'brStatusOff':item.status==='Pending'?'brStatusPending':item.status==='Annual Leave'?'brStatusAnnual':item.status==='Sick Leave'?'brStatusSick':'brStatusAbsent';
+ tr.append(a,b);tbody.append(tr);
+}}
+})();</script></body>
+</html>
