@@ -537,6 +537,10 @@ const specialDay=Number(get('day'));
 const special=Number(get('year'))===2026&&get('month')==='Nov'&&specialDay>=3&&specialDay<=8;
 const absence=[['sick leave','Sick Leave'],['annual leave','Annual Leave'],['absent','Absent'],['exam leave','Exam Leave'],['bereavement','Bereavement'],['emergency','Emergency'],['wntd','WNTD']];
 function statusFor(rep){
+ if(Number(get('year'))===2026 && get('month')==='Nov' && specialDay===10){
+  if(['Mohamed Ahmed Abdelwahab Awad','Yazeed Mohammed Aldbeban'].includes(rep.name))return 'Absent';
+  if(rep.name==='Hassan Mohammed Shemari')return 'Annual Leave';
+ }
  if(rep.name==='Abdullah Hadi M Alotaibi' && Number(get('year'))===2026 && get('month')==='Nov' && (specialDay===8 || specialDay===9))return 'Annual Leave';
  if(rep.name==='Mohamed Ahmed Abdelwahab Awad'&&special&&specialDay<5)return 'Active';
  if(rep.off.includes(dow))return 'Day Off';
@@ -553,6 +557,22 @@ function statusFor(rep){
   for(const [key,value] of absence)if(note.includes(key))return value;
  }
  return 'Active';
+}
+// Date-specific annotations, shown only on 10 November 2026.
+if(Number(get('year'))===2026 && get('month')==='Nov' && specialDay===10){
+ for(const [id,label,cls] of [
+  ['tamimi-unaizah-2','Yazeed – Absent (10 Nov 2026)','brStatusAbsent'],
+  ['hassan-2','Hassan – Annual Leave (10 Nov 2026)','annualLeaveText'],
+  ['abdul-wahab-2','Mohamed – Absent (10 Nov 2026)','brStatusAbsent']
+ ]){
+  const panel=document.getElementById(id);
+  if(panel){
+   const row=document.createElement('div');row.className='row';
+   const prefix=document.createElement('span');prefix.className='noteLabel';prefix.textContent='10 Nov Note: ';
+   const value=document.createElement('span');value.className=cls;value.textContent=label;
+   row.append(prefix,value);panel.append(row);
+  }
+ }
 }
 const statuses=reps.map(rep=>({name:rep.name,status:statusFor(rep)}));
 const count=document.querySelector('#activeBRBadge .activeCount');if(count)count.textContent=statuses.filter(x=>x.status==='Active').length;
