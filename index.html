@@ -538,7 +538,7 @@ const special=Number(get('year'))===2026&&get('month')==='Nov'&&specialDay>=3&&s
 const absence=[['sick leave','Sick Leave'],['annual leave','Annual Leave'],['absent','Absent'],['exam leave','Exam Leave'],['bereavement','Bereavement'],['emergency','Emergency'],['wntd','WNTD']];
 function statusFor(rep){
  if(Number(get('year'))===2026 && get('month')==='Nov' && specialDay===10){
-  if(['Mohamed Ahmed Abdelwahab Awad','Yazeed Mohammed Aldbeban'].includes(rep.name))return 'Absent';
+  if(['Mohamed Ahmed Abdelwahab Awad','Yazeed Mohammed Aldbeban','Abdullah Hadi M Alotaibi'].includes(rep.name))return 'Absent';
   if(rep.name==='Hassan Mohammed Shemari')return 'Annual Leave';
  }
  if(rep.name==='Abdullah Hadi M Alotaibi' && Number(get('year'))===2026 && get('month')==='Nov' && (specialDay===8 || specialDay===9))return 'Annual Leave';
@@ -563,7 +563,8 @@ if(Number(get('year'))===2026 && get('month')==='Nov' && specialDay===10){
  for(const [id,label,cls] of [
   ['tamimi-unaizah-2','Yazeed – Absent (10 Nov 2026)','brStatusAbsent'],
   ['hassan-2','Hassan – Annual Leave (10 Nov 2026)','annualLeaveText'],
-  ['abdul-wahab-2','Mohamed – Absent (10 Nov 2026)','brStatusAbsent']
+  ['abdul-wahab-2','Mohamed – Absent (10 Nov 2026)','brStatusAbsent'],
+  ['nine-plus-2','Abdullah – Absent (10 Nov 2026)','brStatusAbsent']
  ]){
   const panel=document.getElementById(id);
   if(panel){
